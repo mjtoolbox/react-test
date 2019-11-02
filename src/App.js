@@ -46,10 +46,19 @@ class App extends React.Component {
           <Route path='/' exact component={LoginComponent} />
           <AuthenticatedRoute exact path='/home' component={Home} />
           <AuthenticatedRoute path='/students' component={StudentList} />
+          <Route>{wrongUrl}</Route>
         </Switch>
       </Router>
     );
   }
+}
+
+function wrongUrl(){
+  return( 
+    <div>
+<h1>404 Wrong URL</h1><br/><h2>Please naviage to <Link to='/'>login page</Link></h2>
+    </div>
+  )
 }
 
 export default App;
