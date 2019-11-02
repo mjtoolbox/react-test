@@ -2,8 +2,32 @@ import React from 'react';
 import './App.css';
 import StudentList from './StudentList';
 import Home from './Home';
-import { BrowserRouter as Router, Link, Switch, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Link,
+  Redirect,
+  Switch,
+  Route
+} from 'react-router-dom';
+import LoginComponent from './LoginComponent';
 
+const AuthenticatedRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+      localStorage.getItem('userInfo') ? (
+        <Component {...props} />
+      ) : (
+        <Redirect
+          to={{
+            pathname: '/',
+            state: { from: props.location }
+          }}
+        />
+      )
+    }
+  />
+);
 class App extends React.Component {
   render() {
     return (
@@ -19,17 +43,13 @@ class App extends React.Component {
           </ul>
         </div> */}
         <Switch>
-          <Route exact path='/hello' component={Home} />
-          <Route path='/hello/students' component={StudentList} />
-          <Route component={NotFound} />
+          <Route path='/' exact component={LoginComponent} />
+          <AuthenticatedRoute exact path='/home' component={Home} />
+          <AuthenticatedRoute path='/students' component={StudentList} />
         </Switch>
       </Router>
     );
   }
-}
-
-function NotFound() {
-  return <h1>Hey not found!</h1>;
 }
 
 export default App;
