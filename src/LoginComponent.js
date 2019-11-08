@@ -48,7 +48,6 @@ class LoginComponent extends React.Component {
         if (res.data.status === 200) {
           localStorage.setItem('userInfo', JSON.stringify(res.data.authToken));
           this.props.history.push('/home');
-          console.log('home loaded');
         } else {
           this.setState({ message: res.data.message });
           console.log('Authentication failed');
