@@ -6,6 +6,8 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
+import { logOut } from './actions';
+
 // import axios from 'axios';
 
 const styles = {
@@ -23,11 +25,19 @@ const styles = {
 class LoginComponent extends React.Component {
   constructor(props) {
     super(props);
+
+    // reset login status
+    // this.props.dispatch(logOut());
+
     this.state = {
       username: '',
       password: '',
       message: ''
     };
+
+    this.Auth = new AuthService();
+
+    this.onChange = this.onChange.bind(this);
     this.loginClicked = this.loginClicked.bind(this);
   }
 
@@ -37,25 +47,38 @@ class LoginComponent extends React.Component {
 
   loginClicked = e => {
     e.preventDefault();
+
+    const { dispatch } = this.props;
+
     const credentials = {
       username: this.state.username,
       password: this.state.password
     };
 
-    AuthService.login(credentials)
+    // To use Redux with further detail state, user action 
+    this.Auth.login(credentials)
       .then(res => {
-        console.log(res.data);
-        if (res.data.status === 200) {
-          localStorage.setItem('userInfo', JSON.stringify(res.data.authToken));
-          this.props.history.push('/home');
-        } else {
-          this.setState({ message: res.data.message });
-          console.log('Authentication failed');
-        }
+        dispatch();
+        this.props.history.push('/');
       })
       .catch(err => {
         alert(err);
       });
+
+    // AuthService.login(credentials)
+    //   .then(res => {
+    //     console.log(res.data);
+    //     if (res.data.status === 200) {
+    //       localStorage.setItem('userInfo', JSON.stringify(res.data.authToken));
+    //       this.props.history.push('/home');
+    //     } else {
+    //       this.setState({ message: res.data.message });
+    //       console.log('Authentication failed');
+    //     }
+    //   })
+    //   .catch(err => {
+    //     alert(err);
+    //   });
   };
 
   onChange = e => this.setState({ [e.target.name]: e.target.value });
@@ -78,7 +101,7 @@ class LoginComponent extends React.Component {
             </Typography>
             <TextField
               type='text'
-              label='USERNAME'
+              label='EMAIL'
               fullWidth
               margin='normal'
               name='username'

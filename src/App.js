@@ -1,7 +1,5 @@
 import React from 'react';
 import './App.css';
-import StudentList from './StudentList';
-import Home from './Home';
 import {
   BrowserRouter as Router,
   Link,
@@ -9,7 +7,10 @@ import {
   Switch,
   Route
 } from 'react-router-dom';
+import Home from './Home';
 import LoginComponent from './LoginComponent';
+import News from './News';
+import StudentList from './StudentList';
 
 const AuthenticatedRoute = ({ component: Component, ...rest }) => (
   <Route
@@ -20,7 +21,7 @@ const AuthenticatedRoute = ({ component: Component, ...rest }) => (
       ) : (
         <Redirect
           to={{
-            pathname: '/',
+            pathname: '/login',
             state: { from: props.location }
           }}
         />
@@ -28,37 +29,33 @@ const AuthenticatedRoute = ({ component: Component, ...rest }) => (
     }
   />
 );
+
 class App extends React.Component {
   render() {
     return (
       <Router>
-        {/* <div>
-          <ul>
-            <li>
-              <Link to='/students'>Student List</Link>
-            </li>
-            <li>
-              <Link to='/'>Home</Link>
-            </li>
-          </ul>
-        </div> */}
         <Switch>
-          <Route path='/' exact component={LoginComponent} />
-          <AuthenticatedRoute exact path='/home' component={Home} />
-          <AuthenticatedRoute path='/students' component={StudentList} />
-          <Route>{wrongUrl}</Route>
+          <Route exact path='/' component={Home} />
+          <Route exact path='/login' component={LoginComponent} />
+          <Route exact path='/news' component={News} />
+          <AuthenticatedRoute exact path='/students' component={StudentList} />
+          {/* <AuthenticatedRoute path='/oss/students' component={StudentList} /> */}
         </Switch>
       </Router>
     );
   }
 }
 
-function wrongUrl(){
-  return( 
+function wrongUrl() {
+  return (
     <div>
-<h1>404 Wrong URL</h1><br/><h2>Please naviage to <Link to='/'>login page</Link></h2>
+      <h1>404 Wrong URL</h1>
+      <br />
+      <h2>
+        Please naviage to <Link to='/'>login page</Link>
+      </h2>
     </div>
-  )
+  );
 }
 
 export default App;
