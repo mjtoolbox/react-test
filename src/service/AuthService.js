@@ -41,7 +41,6 @@ class AuthService {
         if (res.data.status === 200) {
           // localStorage.setItem('userInfo', JSON.stringify(res.data.authToken));
           this.setToken(res.data.authToken);
-          //this.props.history.push('/home');
           return Promise.resolve(res);
         } else {
           this.setState({ message: res.data.message });
@@ -53,20 +52,9 @@ class AuthService {
       });
   }
 
-  // fetch(endurl, option) {
-  //   switch (String(option)) {
-  //     case 'GET':
-  //       axios.get(API_BASE_URL + '/' + endurl, AuthService.getAuthHeader());
-  //     case 'POST':
-
-  //     caes 'PUT':
-
-  //     case 'DELETE':
-  //   }
-  // }
-
+  // userInfo contains token, username
   setToken(idToken) {
-    localStorage.setItem('userInfo', JSON.stringify(idToken));
+    sessionStorage.setItem('userInfo', JSON.stringify(idToken));
   }
 
   loggedIn() {
@@ -93,20 +81,23 @@ class AuthService {
   }
 
   getUserInfo() {
-    return JSON.parse(localStorage.getItem('userInfo'));
+    return JSON.parse(sessionStorage.getItem('userInfo'));
   }
 
   getAuthHeader() {
+    console.log(this.getUserInfo());
     return {
       headers: {
-        Authorization: 'Bearer ' + this.getUserInfo().token
+        // Authorization: 'Bearer ' + this.getUserInfo().token
+        Authorization: 'Bearer ' + this.getUserInfo()
       }
     };
   }
 
   logOut() {
-    localStorage.removeItem('userInfo');
-    return axios.post(API_BASE_URL + '/token/logout', {}, this.getAuthHeader());
+    sessionStorage.removeItem('userInfo');
+    sessionStorage.removeItem('isLogged');
+    //return axios.post(API_BASE_URL + '/token/logout', {}, this.getAuthHeader());
   }
 }
 

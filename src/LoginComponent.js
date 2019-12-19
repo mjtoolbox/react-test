@@ -6,7 +6,8 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import { logOut } from './actions';
+import { userActions } from './actions';
+import { connect } from 'react-redux';
 
 // import axios from 'axios';
 
@@ -27,7 +28,7 @@ class LoginComponent extends React.Component {
     super(props);
 
     // reset login status
-    // this.props.dispatch(logOut());
+    //this.props.store.dispatch(userActions.logOut());
 
     this.state = {
       username: '',
@@ -42,23 +43,21 @@ class LoginComponent extends React.Component {
   }
 
   componentDidMount() {
-    localStorage.clear();
+    sessionStorage.clear();
   }
 
   loginClicked = e => {
     e.preventDefault();
-
-    const { dispatch } = this.props;
 
     const credentials = {
       username: this.state.username,
       password: this.state.password
     };
 
-    // To use Redux with further detail state, user action 
+    // To use Redux with further detail state, user action
     this.Auth.login(credentials)
       .then(res => {
-        dispatch();
+        this.props.login(this.state.username);
         this.props.history.push('/');
       })
       .catch(err => {
@@ -133,4 +132,10 @@ class LoginComponent extends React.Component {
   }
 }
 
-export default LoginComponent;
+function mapDispatchToProps(dispatch) {
+  return {
+    login: username => dispatch(userActions.loginSuccess(username))
+  };
+}
+
+export default connect(null, mapDispatchToProps)(LoginComponent);

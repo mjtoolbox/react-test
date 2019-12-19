@@ -8,14 +8,14 @@ import {
   Route
 } from 'react-router-dom';
 import { connect } from 'react-redux';
-
-function mapStateToProps(state) {
-  return { isLogged: state.isLogged };
-}
+import AuthService from './service/AuthService';
+import Logout from './Logout.js';
 
 class Home extends React.Component {
   // const isLogged = useSelector(state => state.isLogged);
+
   render() {
+    const { isLogged, username } = this.props;
     return (
       <div className='container'>
         <nav className='navbar navbar-expand-lg navbar-light bg-light'>
@@ -34,19 +34,27 @@ class Home extends React.Component {
                   StudentList
                 </Link>
               </li>
+              {isLogged && <Logout />}
             </ul>
           </div>
         </nav>{' '}
         <br />
-        {/* {this.state.isLogged && ( */}
-          <h2>Welcome Home page. You must be logged in.</h2>
-        {/* )} */}
-        <div>
-          <Link to='/login'>login page</Link>
-        </div>
-        {/* <ReduxDemo></ReduxDemo> */}
+        {isLogged && <h2>Welcome Home page. {username} You are logged in!</h2>}
+        {!isLogged && <h2>Please log in.</h2>}
+        <div>{!isLogged && <Link to='/login'>login page</Link>}</div>
       </div>
     );
+  }
+}
+
+function mapStateToProps(state) {
+  if (state.isLogged == true) {
+    const { isLogged, userInfo } = state;
+    const { username } = userInfo;
+    return {
+      isLogged,
+      username
+    };
   }
 }
 

@@ -11,12 +11,14 @@ import Home from './Home';
 import LoginComponent from './LoginComponent';
 import News from './News';
 import StudentList from './StudentList';
+import Goodbye from './Goodbye';
+
 
 const AuthenticatedRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
-      localStorage.getItem('userInfo') ? (
+      sessionStorage.getItem('userInfo') ? (
         <Component {...props} />
       ) : (
         <Redirect
@@ -36,12 +38,15 @@ class App extends React.Component {
       <Router>
         <Switch>
           <Route exact path='/' component={Home} />
+          <Route exact path='/home' component={Home} />
           <Route exact path='/login' component={LoginComponent} />
           <Route exact path='/news' component={News} />
           <AuthenticatedRoute exact path='/students' component={StudentList} />
           {/* <AuthenticatedRoute path='/oss/students' component={StudentList} /> */}
+          <Route exact path='/logout' component={Goodbye} />
         </Switch>
       </Router>
+     
     );
   }
 }
@@ -57,5 +62,7 @@ function wrongUrl() {
     </div>
   );
 }
+
+
 
 export default App;

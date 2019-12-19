@@ -1,36 +1,36 @@
-import { userConstraints } from '../constants/actionTypes.js';
+import { userConstraints } from '../constraints/actionTypes.js';
 
-// action creators
-// export const loginRequest = userInfo => {
-//   return {
-//     type: userConstraints.LOGIN_REQUEST,
-//     payload: userInfo
-//   };
-// };
+export const userActions = {
+  logOut,
+  loginSuccess,
+  loginFailure
+};
 
 // Not to confuse this action with Reducer.
 // Action is to send out an signal to the store.
-// Type is mandatory, but payload is optional
+// Type is mandatory, but payload is optional.
+// Try not to make too complicated. isLogged determined in Reducer.
 
-export const logOut = userEmail => {
+function logOut() {
   return {
     type: userConstraints.LOGOUT,
-    isLogged: false,
-    payload: userEmail
+    //isLogged: false,
+    payload: ''
   };
-};
+}
 
-export const loginSuccess = userEmail => {
+function loginSuccess(userEmail) {
   return {
     type: userConstraints.LOGIN_SUCCESS,
-    isLogged: true,
+    //isLogged: true,
     payload: userEmail
   };
-};
+}
 
-// export const loginFailure = error => {
-//   return {
-//     type: userConstraints.LOGIN_FAILURE,
-//     payload: error
-//   };
-// };
+function loginFailure(userEmail) {
+  return {
+    type: userConstraints.LOGIN_FAILURE,
+    //isLogged: true,
+    payload: userEmail
+  };
+}
