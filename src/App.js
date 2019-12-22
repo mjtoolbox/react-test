@@ -11,15 +11,27 @@ import Home from './Home';
 import LoginComponent from './LoginComponent';
 import News from './News';
 import StudentList from './StudentList';
-import Goodbye from './Goodbye';
+import Management from './Management';
+import { connect } from 'react-redux';
+import Alert from './Alert.js';
 
-
-const AuthenticatedRoute = ({ component: Component, ...rest }) => (
+const AuthenticatedRoute = ({
+  component: Component,
+  restricted,
+  role,
+  ...rest
+}) => (
   <Route
     {...rest}
     render={props =>
-      sessionStorage.getItem('userInfo') ? (
-        <Component {...props} />
+      sessionStorage.getItem('userProfile') ? (
+        restricted == false ? (
+          <Component {...props} />
+        ) : role === 'ADMIN' ? (
+          <Component {...props} />
+        ) : (
+          <Alert />
+        )
       ) : (
         <Redirect
           to={{
@@ -34,6 +46,8 @@ const AuthenticatedRoute = ({ component: Component, ...rest }) => (
 
 class App extends React.Component {
   render() {
+    const { isLogged, role } = this.props;
+
     return (
       <Router>
         <Switch>
@@ -41,12 +55,22 @@ class App extends React.Component {
           <Route exact path='/home' component={Home} />
           <Route exact path='/login' component={LoginComponent} />
           <Route exact path='/news' component={News} />
-          <AuthenticatedRoute exact path='/students' component={StudentList} />
-          {/* <AuthenticatedRoute path='/oss/students' component={StudentList} /> */}
-          <Route exact path='/logout' component={Goodbye} />
+          <AuthenticatedRoute
+            exact
+            path='/students'
+            restricted={false}
+            role={role}
+            component={StudentList}
+          />
+          <AuthenticatedRoute
+            exact
+            path='/management'
+            restricted={true}
+            role={role}
+            component={Management}            
+          />
         </Switch>
       </Router>
-     
     );
   }
 }
@@ -63,6 +87,26 @@ function wrongUrl() {
   );
 }
 
+function restrictedPage() {
+  return (
+    <div>
+      <h1>This page is restricted</h1>
+      <br />
+      <h2>
+        Please naviage to <Link to='/home'>Home</Link>
+      </h2>
+    </div>
+  );
+}
 
+function mapStateToProps(state) {
+  if (state.isLogged == true) {
+    const { isLogged, role } = state;
+    return {
+      isLogged,
+      role
+    };
+  }
+}
 
-export default App;
+export default connect(mapStateToProps)(App);

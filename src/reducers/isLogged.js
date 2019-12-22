@@ -2,30 +2,32 @@ import { userConstraints } from '../constraints/actionTypes.js';
 
 // This is my state design
 
-let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+let userProfile = JSON.parse(sessionStorage.getItem('userProfile'));
 
 // In case if we need to pass token.
-const emptyInfo = {
+const emptyProfile = {
   token: '',
-  username: ''
+  email: '',
+  name: '',
 };
 
-const initialState = userInfo
-  ? { isLogged: true, userInfo }
-  : { isLogged: false, emptyInfo };
+const initialState = userProfile
+  ? { isLogged: true, userProfile }
+  : { isLogged: false, emptyProfile };
 
 const loggedReducer = (state = initialState, action) => {
   switch (action.type) {
     case userConstraints.LOGIN_SUCCESS:
-      console.log('reducer', action);
       return {
-        isLogged: true,
-        userInfo: action.payload
+        isLogged: true, // driven value
+        userProfile: action.payload,
+        role: action.payload.roles[0].authority // For now, just 1 role
       };
     case userConstraints.LOGOUT:
       return {
         isLogged: false,
-        userInfo: ''
+        userProfile: '',
+        role: ''
       };
     default:
       return state;

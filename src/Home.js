@@ -12,10 +12,9 @@ import AuthService from './service/AuthService';
 import Logout from './Logout.js';
 
 class Home extends React.Component {
-  // const isLogged = useSelector(state => state.isLogged);
 
   render() {
-    const { isLogged, username } = this.props;
+    const { isLogged, name, role } = this.props;
     return (
       <div className='container'>
         <nav className='navbar navbar-expand-lg navbar-light bg-light'>
@@ -34,14 +33,24 @@ class Home extends React.Component {
                   StudentList
                 </Link>
               </li>
+              <li className='nav-item'>
+                <Link to='/management' className='nav-link'>
+                  Management
+                </Link>
+              </li>
+              {!isLogged &&
+              <li className='nav-item'>
+                <Link to='/login' className='nav-link'>
+                  Login
+                </Link>
+              </li>}              
               {isLogged && <Logout />}
             </ul>
           </div>
         </nav>{' '}
         <br />
-        {isLogged && <h2>Welcome Home page. {username} You are logged in!</h2>}
+        {isLogged && <h2>Welcome {name}, you are logged in! Your role is {role}</h2>}
         {!isLogged && <h2>Please log in.</h2>}
-        <div>{!isLogged && <Link to='/login'>login page</Link>}</div>
       </div>
     );
   }
@@ -49,11 +58,12 @@ class Home extends React.Component {
 
 function mapStateToProps(state) {
   if (state.isLogged == true) {
-    const { isLogged, userInfo } = state;
-    const { username } = userInfo;
+    const { isLogged, userProfile, role } = state;
+    const { email, name } = userProfile;
     return {
       isLogged,
-      username
+      name, 
+      role
     };
   }
 }

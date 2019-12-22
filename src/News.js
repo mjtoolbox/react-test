@@ -2,7 +2,7 @@ import React from 'react';
 
 class News extends React.Component {
   render() {
-    return <h1>News page, no need to be authenticated </h1>;
+    return <h1>News page, anybody can see this page without logging in. </h1>;
   }
 }
 

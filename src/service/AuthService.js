@@ -2,8 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import { decode } from 'punycode';
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import { userActions } from './../actions';
 import { connect } from 'react-redux';
-import { loginRequest, logout, loginSuccess } from '../actions';
 
 const API_BASE_URL = 'http://localhost:8080';
 
@@ -18,29 +18,22 @@ class AuthService {
       .post(API_BASE_URL + '/token/generate-token', credentials)
       .then(res => {
         console.log(res.data);
-        if (res.data.status === 200) {
-          // localStorage.setItem('userInfo', JSON.stringify(res.data.authToken));
-          this.setToken(res.data.authToken);
-          //this.props.history.push('/home');
-          return Promise.resolve(res);
-        } else {
-          this.setState({ message: res.data.message });
-          console.log('Authentication failed');
-        }
+        // this.setToken(res.data.token);
+        this.setUserProfile(res.data);
+        return Promise.resolve(res);
       })
-      .catch(err => {
-        alert(err);
-      });
+    .catch(err => {
+      console.log('Authentication failed', err);
+    });
   }
 
   signup(userInfo) {
     return axios
       .post(API_BASE_URL + '/register', userInfo)
       .then(res => {
-        console.log(res.data);
         if (res.data.status === 200) {
-          // localStorage.setItem('userInfo', JSON.stringify(res.data.authToken));
-          this.setToken(res.data.authToken);
+          this.setUserProfile(res.data);
+
           return Promise.resolve(res);
         } else {
           this.setState({ message: res.data.message });
@@ -52,9 +45,11 @@ class AuthService {
       });
   }
 
-  // userInfo contains token, username
-  setToken(idToken) {
-    sessionStorage.setItem('userInfo', JSON.stringify(idToken));
+  setUserProfile(data) {
+    sessionStorage.setItem('userProfile', JSON.stringify(data));
+  }
+  getUserProfile() {
+    return JSON.parse(sessionStorage.getItem('userProfile'));
   }
 
   loggedIn() {
@@ -75,13 +70,10 @@ class AuthService {
     }
   }
 
+  // Really it should name it as getToken()
   getProfile() {
     // Using jwt-decode npm package to decode the token
-    return decode(this.getUserInfo().token);
-  }
-
-  getUserInfo() {
-    return JSON.parse(sessionStorage.getItem('userInfo'));
+    return decode(this.getUserProfile().token);
   }
 
   getAuthHeader() {
@@ -89,15 +81,15 @@ class AuthService {
     return {
       headers: {
         // Authorization: 'Bearer ' + this.getUserInfo().token
-        Authorization: 'Bearer ' + this.getUserInfo()
+        Authorization: 'Bearer ' + this.getProfile()
       }
     };
   }
 
   logOut() {
-    sessionStorage.removeItem('userInfo');
+    sessionStorage.removeItem('userProfile');
     sessionStorage.removeItem('isLogged');
-    //return axios.post(API_BASE_URL + '/token/logout', {}, this.getAuthHeader());
+    return axios.post(API_BASE_URL + '/token/logout', {}, this.getAuthHeader());
   }
 }
 

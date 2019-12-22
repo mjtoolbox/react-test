@@ -31,7 +31,7 @@ class LoginComponent extends React.Component {
     //this.props.store.dispatch(userActions.logOut());
 
     this.state = {
-      username: '',
+      email: '',
       password: '',
       message: ''
     };
@@ -40,28 +40,36 @@ class LoginComponent extends React.Component {
 
     this.onChange = this.onChange.bind(this);
     this.loginClicked = this.loginClicked.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
   componentDidMount() {
-    sessionStorage.clear();
+    // sessionStorage.clear();
   }
 
   loginClicked = e => {
     e.preventDefault();
 
     const credentials = {
-      username: this.state.username,
+      email: this.state.email,
       password: this.state.password
     };
 
     // To use Redux with further detail state, user action
     this.Auth.login(credentials)
       .then(res => {
-        this.props.login(this.state.username);
+        // if (res.data.status === 200) {
+        this.props.login(res.data);
         this.props.history.push('/');
+        // } else {
+        //   console.log('Login Failed!!! From LoginComponent');
+        // }
       })
       .catch(err => {
-        alert(err);
+        this.setState({
+          message: 'Authentication failed. Please check your password.'
+        });
+        this.props.loginFailure(this.state.email);
       });
 
     // AuthService.login(credentials)
@@ -82,6 +90,13 @@ class LoginComponent extends React.Component {
 
   onChange = e => this.setState({ [e.target.name]: e.target.value });
 
+  onClick = e => {
+    this.setState({ [e.target.name]: e.target.value });
+    this.setState({
+      message: ''
+    });
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -95,7 +110,7 @@ class LoginComponent extends React.Component {
             Login
           </Typography>
           <form>
-            <Typography variant='h4' style={styles.notification}>
+            <Typography variant='h6' style={styles.notification}>
               {this.state.message}
             </Typography>
             <TextField
@@ -103,9 +118,10 @@ class LoginComponent extends React.Component {
               label='EMAIL'
               fullWidth
               margin='normal'
-              name='username'
-              value={this.state.username}
+              name='email'
+              value={this.state.email}
               onChange={this.onChange}
+              onClick={this.onClick}
             />
 
             <TextField
@@ -116,6 +132,7 @@ class LoginComponent extends React.Component {
               name='password'
               value={this.state.password}
               onChange={this.onChange}
+              onClick={this.onClick}
             />
 
             <Button
@@ -134,7 +151,8 @@ class LoginComponent extends React.Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    login: username => dispatch(userActions.loginSuccess(username))
+    login: userProfile => dispatch(userActions.loginSuccess(userProfile)),
+    loginFailure: email => dispatch(userActions.loginFailure(email))
   };
 }
 
