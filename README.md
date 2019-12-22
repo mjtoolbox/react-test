@@ -1,4 +1,4 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). Backend Spring Boot is based on mjtoolbox/oss.
 
 ## Available Scripts
 
